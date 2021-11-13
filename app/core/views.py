@@ -25,3 +25,4 @@ class ProductViewSet(viewsets.ModelViewSet):
         product = self.get_object()
         return Response(ProductSerializer(product).data, 
                         status=status.HTTP_200_OK)
+                        
