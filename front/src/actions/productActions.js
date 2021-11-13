@@ -7,7 +7,7 @@ import {
 
 // dispatch es una función que gestiona el tipo de 'action' (petición) 
 // para generar una respuesta u otra en función de la respuesta obtenida
-const listProducts = () => async (dispatch) => {
+export const listProducts = () => async (dispatch) => {
     try {
         dispatch({ type: PRODUCT_LIST_REQUEST })
         const { data } = await axios.get('/api/products/')

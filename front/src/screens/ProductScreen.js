@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Row, Col, Image, ListGroup, Button, Card } from 'react-bootstrap'
+import { Row, Col, Image, ListGroup, Button } from 'react-bootstrap'
 import Rating from '../components/Rating'
 import axios from 'axios'
-
-import products from '../products'
+import { CURRENCY } from '../constants/productConstants'
 
 function ProductScreen({ match }) {
     const [product, setProduct] = useState([])
@@ -12,6 +11,7 @@ function ProductScreen({ match }) {
     useEffect(() => {
         async function getProduct(){
             const {data} = await axios.get(`/api/products/${match.params.id}`)
+            console.log(`/api/products/${match.params.id}`)
             setProduct(data)
         }
         getProduct()
@@ -31,15 +31,19 @@ function ProductScreen({ match }) {
                         </ListGroup.Item>
 
                         <ListGroup.Item>
-                            <Rating value={product.rating} text={`${product.numReviews} reviews`} color={'#f8e825'} />
+                            <Rating value={product.rating} text={`${product.numReviews} valoraciones`} color={'#f8e825'} />
                         </ListGroup.Item>
 
                         <ListGroup.Item>
-                            Precio: €{product.price}
+                            {product.price}{CURRENCY}
                         </ListGroup.Item>
 
                         <ListGroup.Item>
-                            Descripción: {product.description}
+                            {product.brand}
+                        </ListGroup.Item>
+
+                        <ListGroup.Item>
+                            {product.description}
                         </ListGroup.Item>
                     </ListGroup>
                 </Col>
@@ -52,7 +56,7 @@ function ProductScreen({ match }) {
                                     Precio:
                                 </Col>
                                 <Col>
-                                    <strong>€{product.price}</strong>
+                                    <strong>{product.price}{CURRENCY}</strong>
                                 </Col>
                             </Row>
                         </ListGroup.Item>

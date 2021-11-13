@@ -1,37 +1,36 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Row, Col } from 'react-bootstrap'
 import Product from '../components/Product'
-import axios from 'axios'
 
-import products from '../products'
+import { listProducts } from '../actions/productActions'
+import Spinner from '../components/Spinner'
+import Message from '../components/Message'
 
-function HomeScreen(){
-    /* Uso de useState = genera una estructura de datos, un método y un valor inicial
-                         sobre el cual iteraremos y modificaremos su valor
-        1 -> definimos un array de elementos (products)
-        2 -> definimos un método que actualizará dicho array (setProducts)
-        3 -> definimos el valor original/inicial del array (useState([])) 
-    */
-    const[products, setProducts] = useState([])
-
-    /* uso de useEffect = utiliza todo lo generado en useState para modificarlo
+function HomeScreen() {
+    const dispatch = useDispatch()
+    const productList = useSelector(state => state.productList)
+    // Destructuring de los 'key' de productReducer
+    const { e, loading, products } = productList
+    /* uso de useEffect = utiliza todo lo generado en actions/productActions/listProducts para modificarlo
                           Ponemos un array vacío al final de useEffect porque solo queremos que 
                           la estructura de datos (array) se actualice cuando se cargue el componente y no
                           en cada elemento que contiene
     */
     useEffect(() => {
         console.log('useEffect')
-        // Usamos async-await en vez de promesas (.then()) para aportar actualidad al código
-        async function getProducts(){
-            const { data } = await axios.get('/api/products/')
-            setProducts(data)
-        }
-        getProducts()
+        dispatch(listProducts())
     }, [])
 
-        return (
-                <div>
-                    <h1>Novedades</h1>
+    return (
+        <div>
+            <h1>Novedades</h1>
+            {/* Renderiza el mensaje entre los <h2> si está cargando datos */}
+            {loading ? <Spinner />
+                // Si ha habido algún error renderizará el mensaje de error (e)
+                : e ? <Message variant='danger'>{e}</Message>
+                    :
+                    // Si todo sale bien devuelve los datos
                     <Row>
                         {products.map(product => (
                             // Responsive según el tamaño de pantalla en el que se muestre
@@ -41,8 +40,9 @@ function HomeScreen(){
 
                         ))}
                     </Row>
-                </div>
-        )   
-    }
+            }
+        </div>
+    )
+}
 
 export default HomeScreen
