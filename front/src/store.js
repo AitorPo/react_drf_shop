@@ -4,6 +4,7 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 import { productListReducer, productDetailsReducer } from './reducers/productReducers'
 import { cartReducer } from './reducers/cartReducers'
 import { userLoginReducer, userRegisterReducer, userDetailsReducer, userUpdateProfileReducer } from './reducers/userReducers'
+import { orderCreateReducer } from './reducers/orderReducers'
 
 // seteamos la constante 'reducer' con el funcionamiento del custom reducer creado en ./reducers
 const reducer = combineReducers({
@@ -14,6 +15,7 @@ const reducer = combineReducers({
     userRegister: userRegisterReducer,
     userDetails: userDetailsReducer,
     userUpdate: userUpdateProfileReducer,
+    orderCreate: orderCreateReducer,
 })
 
 // 'Desparseamos' los datos del localstorage para convertirlos a su estado original de objeto de JS
@@ -29,10 +31,16 @@ const userInfoFromLocalStorage = localStorage.getItem('userInfo') ?
     // En caso contrario devolverá un null
     : null
 
+const shippingInfoFromLocalStorage = localStorage.getItem('shippingInfo') ?
+    // Si los datos existes, se convertirán a objeto JSON
+    JSON.parse(localStorage.getItem('shippingInfo'))
+    // En caso contrario devolverá un objeto vacío
+    : {}
+
 
 const initialState = {
-    cart: { cartItems: cartItemsFromLocalStorage },
-    userLogin: {userInfo: userInfoFromLocalStorage}
+    cart: { cartItems: cartItemsFromLocalStorage, shippingInfo: shippingInfoFromLocalStorage },
+    userLogin: { userInfo: userInfoFromLocalStorage },
 }
 
 const middleware = [thunk]

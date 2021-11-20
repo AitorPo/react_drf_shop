@@ -44,13 +44,13 @@ function CartScreen({ match, location, history }) {
                 ) : (
                     <ListGroup variant='flush'>
                         {cartItems.map(item => (
-                            <ListGroup.Item key={item.id}>
+                            <ListGroup.Item key={item.product}>
                                 <Row>
                                     <Col md={2}>
                                         <Image src={item.image} alt={item.name} fluid rounded />
                                     </Col>
                                     <Col md={3} className='my-2'>
-                                        <Link to={`/product/${item.id}`}>{item.name}</Link>
+                                        <Link to={`/product/${item.product}`}>{item.name}</Link>
                                     </Col>
                                     <Col md={2} className='my-2'>
                                         {item.price}{CURRENCY}
@@ -58,7 +58,7 @@ function CartScreen({ match, location, history }) {
                                     <Col md={3}>
                                         <Form.Control as="select"
                                             value={item.units}
-                                            onChange={(e) => dispatch(addToCart(item.id, Number(e.target.value)))}>
+                                            onChange={(e) => dispatch(addToCart(item.product, Number(e.target.value)))}>
                                             {
                                                 // Constructor de arrays en línea
                                                 // Crea tantos elementos como stock exista [0, 1, 2...]
@@ -74,7 +74,7 @@ function CartScreen({ match, location, history }) {
                                         <Button
                                             type='button'
                                             variant='light'
-                                            onClick={() => removeFromCart(item.id)}
+                                            onClick={() => removeFromCart(item.product)}
                                         >
                                             <i className='fas fa-trash'></i>
                                         </Button>

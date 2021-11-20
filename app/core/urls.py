@@ -7,6 +7,7 @@ from .views import order_views, product_views, user_views
 router=DefaultRouter()
 router.register('products', product_views.ProductViewSet, basename='products')
 router.register('users', user_views.UserViewSet, basename='users')
+router.register('orders', order_views.OrderViewSet, basename='orders')
 
 app_name='core'
 
