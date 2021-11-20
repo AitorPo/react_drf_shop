@@ -23,8 +23,8 @@ export const listProducts = () => async (dispatch) => {
             type: PRODUCT_LIST_FAIL,
             // devolvemos un mensaje genérico (e.message) siempre y cuando
             // NO exista un mensaje de error devuelto por la API (e.response.data.message)
-            payload: e.response && e.response.data.message
-            ? e.response.data.message
+            payload: e.response && e.response.data.detail
+            ? e.response.data.detail
             : e.message,
         })
     }
@@ -43,8 +43,8 @@ export const listProductDetails = (id) => async (dispatch) => {
             type: PRODUCT_DETAILS_FAIL,
             // devolvemos un mensaje genérico (e.message) siempre y cuando
             // NO exista un mensaje de error devuelto por la API (e.response.data.message)
-            payload: e.response && e.response.data.message
-            ? e.response.data.message
+            payload: e.response && e.response.data.detail
+            ? e.response.data.detail
             : e.message,
         })
     }

@@ -26,6 +26,11 @@ class UserSerializer(serializers.ModelSerializer):
 
         return name
 
+    def save(self, **kwargs):
+        if self.id is None:
+            self.email = self.username
+        return super().save(**kwargs)
+
 
 class UserSerializerWithToken(UserSerializer):
     token = serializers.SerializerMethodField(read_only=True)

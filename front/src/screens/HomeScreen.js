@@ -1,3 +1,13 @@
+/* 
+***********
+* SCREENS *
+***********
+Junto con los "Components" nos ayudan a "pintar" el HTML y boostrap
+de nuestras secciones de contenido definidas en el front. Las "Screens" 
+van más alla que los "Components" ya que en estos ficheros añadimos
+funcionalidades de scripts de React y Redux (JavaScript)
+*/
+
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Row, Col } from 'react-bootstrap'
@@ -20,7 +30,7 @@ function HomeScreen() {
     useEffect(() => {
         console.log('useEffect')
         dispatch(listProducts())
-    }, [])
+    },[dispatch])
 
     return (
         <div>
