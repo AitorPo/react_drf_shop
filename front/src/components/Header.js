@@ -34,22 +34,35 @@ function Header() {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="mr-auto">
-                        <LinkContainer to='/cart'>
-                            <Nav.Link><i className="fas fa-shopping-cart"></i> Carrito</Nav.Link>
-                        </LinkContainer>
-
-                        {userInfo ? (
-                            <NavDropdown title={userInfo.name} id='username'>
-                                <LinkContainer to='/profile'>
-                                    <NavDropdown.Item>Perfil</NavDropdown.Item>
-                                </LinkContainer>
-                                <NavDropdown.Item onClick={logout}>Salir</NavDropdown.Item>
-                            </NavDropdown>
-                        ): (
-                            <LinkContainer to='/login'>
-                                <Nav.Link><i className="fas fa-user"></i> Iniciar sesión</Nav.Link>
+                            <LinkContainer to='/cart'>
+                                <Nav.Link><i className="fas fa-shopping-cart"></i> Carrito</Nav.Link>
                             </LinkContainer>
-                        )}                        
+
+                            {userInfo ? (
+                                <NavDropdown title={userInfo.name} id='username'>
+                                    <LinkContainer to='/profile'>
+                                        <NavDropdown.Item>Perfil</NavDropdown.Item>
+                                    </LinkContainer>
+                                    <NavDropdown.Item onClick={logout}>Salir</NavDropdown.Item>
+                                </NavDropdown>
+                            ) : (
+                                <LinkContainer to='/login'>
+                                    <Nav.Link><i className="fas fa-user"></i> Iniciar sesión</Nav.Link>
+                                </LinkContainer>
+                            )}
+                            {userInfo && userInfo.isAdmin && (
+                                <NavDropdown title='Admin' id='adminMenu'>
+                                    <LinkContainer to='/admin/list_users'>
+                                        <NavDropdown.Item>Usuarios</NavDropdown.Item>
+                                    </LinkContainer>
+                                    <LinkContainer to='/admin/product_list'>
+                                        <NavDropdown.Item>Productos</NavDropdown.Item>
+                                    </LinkContainer>
+                                    <LinkContainer to='/admin/order_list'>
+                                        <NavDropdown.Item>Pedidos</NavDropdown.Item>
+                                    </LinkContainer>
+                                </NavDropdown>
+                            )}
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
