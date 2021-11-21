@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Button, Row, Col } from 'react-bootstrap'
+import { Form, Button, Row, Col, Table } from 'react-bootstrap'
+import { LinkContainer } from 'react-router-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Spinner from '../components/Spinner'
 import Message from '../components/Message'
 import { retrieveUserDetails, updateProfile } from '../actions/userActions'
 import { USER_UPDATE_PROFILE_RESET } from '../constants/userConstants'
+import { getOrderList } from '../actions/orderActions'
+import { CURRENCY } from '../constants/productConstants'
 
 function ProfileScreen({ history }) {
     const [name, setName] = useState('')
@@ -20,8 +23,12 @@ function ProfileScreen({ history }) {
     const userLogin = useSelector(state => state.userLogin)
     const { userInfo } = userLogin
     // Actialización de usuario
+    // Cogemos el valor de state de el reducer registrado en store.js
     const userUpdateProfile = useSelector(state => state.userUpdate)
     const { success } = userUpdateProfile
+    // Listamos los pedidos vinculados al usuario logueado
+    const getOrders = useSelector(state => state.orderList)
+    const { loading: loadingOrders, e: errOrders, orders } = getOrders
 
     useEffect(() => {
         if (!userInfo) {
@@ -32,6 +39,7 @@ function ProfileScreen({ history }) {
                 dispatch({ type: USER_UPDATE_PROFILE_RESET })
                 // pasamos el id como parámetro de nuestra action
                 dispatch(retrieveUserDetails('profile'))
+                dispatch(getOrderList())
             } else {
                 setName(user.name)
                 setEmail(user.email)
@@ -51,7 +59,7 @@ function ProfileScreen({ history }) {
                     'email': email,
                     'password': password
                 }))
-                setMessage('')
+            setMessage('')
         }
     }
     return (
@@ -109,8 +117,45 @@ function ProfileScreen({ history }) {
                 </Form>
             </Col>
 
-            <Col md={3}>
+            <Col md={9}>
                 <h2>Mis pedidos</h2>
+                {loadingOrders ? (
+                    <Spinner />
+                ) : errOrders ? (
+                    <Message variant='danger'>{errOrders}</Message>
+                ) : (
+                    <Table striped responsive className='table-sm'>
+                        <thead>
+                            <tr>
+                                <th>Nº pedido</th>
+                                <th>Fecha de pedido</th>
+                                <th>Total</th>
+                                <th>Pagado</th>
+                                <th>Fecha de envío</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {orders.map(order => (
+                                <tr key={order._id}>
+                                    <td>{order._id}</td>
+                                    <td>{order.createdAt.substring(0, 10)}</td>
+                                    <td>{order.totalPrice}{CURRENCY}</td>
+                                    <td>{order.isPaid ? order.paidAt.substring(0, 10) : (
+                                        <i className='fas fa-times' style={{ color: 'red' }}></i>
+                                    )}</td>
+                                    <td>
+                                        <LinkContainer to={`order/${order._id}`}>
+                                            <Button className='btn-sm'>
+                                                Detalle
+                                            </Button>
+                                        </LinkContainer>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+                )}
             </Col>
         </Row>
     )

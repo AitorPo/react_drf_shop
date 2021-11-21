@@ -3,7 +3,7 @@
 2 -> Creamos el reducer correspondiente al modelo y definimos los datos que devolverá cada constante (/reducers/)
 3 -> Registramos el reducer en store.js para poder utilizarlo (comprobamos que se ha registrado en la consola de Redux del navegador)
 4 -> Creamos las acciones que desencadenará el reducer (/actions/)
-5 -> 
+5 -> Importamos todo y generamos la lógica de negocio en la Screen del modelo correspondiente (/screens/)
 */
 
 export const ORDER_CREATE_REQUEST = 'ORDER_CREATE_REQUEST'
@@ -19,3 +19,8 @@ export const ORDER_PAY_REQUEST = 'ORDER_PAY_REQUEST'
 export const ORDER_PAY_SUCCESS = 'ORDER_PAY_SUCCESS'
 export const ORDER_PAY_FAIL = 'ORDER_PAY_FAIL'
 export const ORDER_PAY_RESET = 'ORDER_PAY_RESET'
+
+export const ORDER_LIST_REQUEST = 'ORDER_LIST_REQUEST'
+export const ORDER_LIST_SUCCESS = 'ORDER_LIST_SUCCESS'
+export const ORDER_LIST_FAIL = 'ORDER_LIST_FAIL'
+export const ORDER_LIST_RESET = 'ORDER_LIST_RESET'

@@ -9,7 +9,9 @@ import {
     ORDER_PAY_SUCCESS,
     ORDER_PAY_REQUEST,
     ORDER_PAY_FAIL,
-    ORDER_PAY_RESET,
+    ORDER_LIST_SUCCESS,
+    ORDER_LIST_REQUEST,
+    ORDER_LIST_FAIL,
 } from '../constants/orderConstants'
 
 import { CART_CLEAR_ITEMS } from '../constants/cartConstants'
@@ -127,6 +129,43 @@ export const payOrder = (id, paymentResponse) => async (dispatch, getState) => {
     } catch (e) {
         dispatch({
             type: ORDER_PAY_FAIL,
+            payload: e.response && e.response.data.detail
+                ? e.response.data.detail
+                : e.message,
+        })
+    }
+}
+
+export const getOrderList = (id) => async (dispatch, getState) => {
+    try {
+        dispatch({
+            type: ORDER_LIST_REQUEST
+        })
+
+        const {
+            userLogin: { userInfo },
+        } = getState()
+
+        const config = {
+            headers: {
+                'Content-type': 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const { data } = await axios.get(
+            `/api/orders/my-orders`,
+            config
+        )
+
+        dispatch({
+            type: ORDER_LIST_SUCCESS,
+            payload: data
+        })
+
+    } catch (e) {
+        dispatch({
+            type: ORDER_LIST_FAIL,
             payload: e.response && e.response.data.detail
                 ? e.response.data.detail
                 : e.message,

@@ -88,7 +88,8 @@ class OrderViewSet(viewsets.ModelViewSet):
         pk = self.request.query_params.get('id')
         order = Order.objects.get(_id=pk)
         order.isPaid = True
-        order.paidAit = datetime.now()
+        order.paidAt = datetime.now()
         order.save()
         return Response({'detail': 'Pedido pagado y actualizado'}, status=status.HTTP_200_OK)
+    
     
