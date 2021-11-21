@@ -48,13 +48,13 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, permission_classes=(permissions.IsAuthenticated,))
     def profile(self, request):
         serializer = self.get_serializer(self.get_object())
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=False, permission_classes=(permissions.IsAdminUser,))
     def list_users(self, request):
         users = get_user_model().objects.all()
         serializer = self.get_serializer(users, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=('POST',), permission_classes=(permissions.AllowAny,))
     def register(self, request):
@@ -84,4 +84,4 @@ class UserViewSet(viewsets.ModelViewSet):
             user.password = make_password(request.data['password'])
         user.save()
 
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1,14 +1,10 @@
-from django.shortcuts import render
-from rest_framework import permissions
-
-from rest_framework.decorators import action, api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
 
 from core.models import Product, Order, OrderItem, ShippingAddress
 from core.serializers import ProductSerializer, OrderSerializer
 
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, permissions
 from datetime import datetime
 
 
@@ -36,7 +32,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             totalPrice=data['totalPrice']
         )
 
-        shipping = ShippingAddress.objects.create(
+        ShippingAddress.objects.create(
             order=order,
             address=data['shippingInfo']['address'],
             city=data['shippingInfo']['city'],
@@ -60,18 +56,39 @@ class OrderViewSet(viewsets.ModelViewSet):
             product.save()
 
         serializer = OrderSerializer(order, many=False)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, url_path='my-orders', permission_classes=(permissions.IsAuthenticated,))
     def my_orders(self, request):
         user = request.user
         orders = user.order_set.all()
         serializer = OrderSerializer(orders, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(detail=False, permission_classes=(permissions.IsAuthenticated,), url_path='order')
+    def order(self, request):
+        user = request.user
+        pk = self.request.query_params.get('id')
+        try:
+            order = Order.objects.get(_id=pk)
+            if user.is_staff or order.user == user:
+                serializer = OrderSerializer(order)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response({'detail':'No existe ese pedido'}, status=status.HTTP_404_NOT_FOUND)
     
     @action(detail=False, url_path='list-orders', permission_classes=(permissions.IsAdminUser,))
     def list_orders(self, request):
         orders = Order.objects.all()
         serializer=OrderSerializer(orders, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=('PUT',) ,permission_classes=(permissions.IsAuthenticated,), url_path='pay')
+    def payOrder(self, request):
+        pk = self.request.query_params.get('id')
+        order = Order.objects.get(_id=pk)
+        order.isPaid = True
+        order.paidAit = datetime.now()
+        order.save()
+        return Response({'detail': 'Pedido pagado y actualizado'}, status=status.HTTP_200_OK)
     

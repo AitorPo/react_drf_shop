@@ -4,7 +4,7 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 import { productListReducer, productDetailsReducer } from './reducers/productReducers'
 import { cartReducer } from './reducers/cartReducers'
 import { userLoginReducer, userRegisterReducer, userDetailsReducer, userUpdateProfileReducer } from './reducers/userReducers'
-import { orderCreateReducer } from './reducers/orderReducers'
+import { orderCreateReducer, orderDetailsReducer, orderPayReducer } from './reducers/orderReducers'
 
 // seteamos la constante 'reducer' con el funcionamiento del custom reducer creado en ./reducers
 const reducer = combineReducers({
@@ -16,6 +16,8 @@ const reducer = combineReducers({
     userDetails: userDetailsReducer,
     userUpdate: userUpdateProfileReducer,
     orderCreate: orderCreateReducer,
+    orderDetails: orderDetailsReducer,
+    orderPay: orderPayReducer,
 })
 
 // 'Desparseamos' los datos del localstorage para convertirlos a su estado original de objeto de JS
