@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 
-from ..models import Product
+from ..models import Product, Review
 from ..serializers import ProductSerializer
 
 
@@ -74,3 +74,35 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         return Response('Imagen subida')
     
+    @action(detail=True, methods=('POST',), permission_classes=(permissions.IsAuthenticated,))
+    def review(self, request, pk):
+        user = request.user
+        product = get_object_or_404(Product, _id=pk)
+        data = request.data
+        
+        review_exists = product.review_set.filter(user=user).exists()
+        if(review_exists):
+            content = {'detail': 'El producto ha sido valorado'}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        elif data['rating'] == 0:
+            content = {'detail': 'Selecciona una puntuación'}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            review = Review.objects.create(
+                user=user,
+                product=product,
+                name=user.first_name,
+                rating=data['rating'],
+                comment=data['comment'],
+            )
+            reviews_qs = product.review_set.all()
+            product.numReviews = len(reviews_qs)
+            total = 0
+            
+            for x in reviews_qs:
+                total += x.rating
+                
+            product.rating = total / len(reviews_qs)
+            product.save()
+            
+            return Response({'detail':'Valoración añadida'}, status=status.HTTP_201_CREATED)

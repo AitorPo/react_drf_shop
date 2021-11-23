@@ -1,5 +1,6 @@
-from rest_framework.decorators import action, permission_classes
+from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 
 from core.models import Product, Order, OrderItem, ShippingAddress
 from core.serializers import ProductSerializer, OrderSerializer
@@ -79,7 +80,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, url_path='list-orders', permission_classes=(permissions.IsAdminUser,))
     def list_orders(self, request):
-        orders = Order.objects.all()
+        orders = Order.objects.all().order_by('-_id')
         serializer=OrderSerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
@@ -91,5 +92,17 @@ class OrderViewSet(viewsets.ModelViewSet):
         order.paidAt = datetime.now()
         order.save()
         return Response({'detail': 'Pedido pagado y actualizado'}, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=('PUT',), url_path=('deliver'), permission_classes=(permissions.IsAdminUser,))
+    def modify_order_by_admin(self, request):
+        pk = self.request.query_params.get('id')
+        order = get_object_or_404(Order, _id=pk)
+
+        order.isDelivered = True
+        order.deliveredAt = datetime.now()
+        
+        order.save()
+
+        return Response({'detail':'Pedido enviado'}, status=status.HTTP_200_OK)
     
     

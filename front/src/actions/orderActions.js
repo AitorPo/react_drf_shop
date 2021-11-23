@@ -12,6 +12,12 @@ import {
     ORDER_LIST_SUCCESS,
     ORDER_LIST_REQUEST,
     ORDER_LIST_FAIL,
+    ORDER_ADMIN_LIST_SUCCESS,
+    ORDER_ADMIN_LIST_REQUEST,
+    ORDER_ADMIN_LIST_FAIL,
+    ORDER_DELIVER_SUCCESS,
+    ORDER_DELIVER_REQUEST,
+    ORDER_DELIVER_FAIL,
 } from '../constants/orderConstants'
 
 import { CART_CLEAR_ITEMS } from '../constants/cartConstants'
@@ -166,6 +172,81 @@ export const getOrderList = (id) => async (dispatch, getState) => {
     } catch (e) {
         dispatch({
             type: ORDER_LIST_FAIL,
+            payload: e.response && e.response.data.detail
+                ? e.response.data.detail
+                : e.message,
+        })
+    }
+}
+
+export const getOrderAdminList = (id) => async (dispatch, getState) => {
+    try {
+        dispatch({
+            type: ORDER_ADMIN_LIST_REQUEST
+        })
+
+        const {
+            userLogin: { userInfo },
+        } = getState()
+
+        const config = {
+            headers: {
+                'Content-type': 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const { data } = await axios.get(
+            `/api/orders/list-orders`,
+            config
+        )
+
+        dispatch({
+            type: ORDER_ADMIN_LIST_SUCCESS,
+            payload: data
+        })
+
+    } catch (e) {
+        dispatch({
+            type: ORDER_ADMIN_LIST_FAIL,
+            payload: e.response && e.response.data.detail
+                ? e.response.data.detail
+                : e.message,
+        })
+    }
+}
+
+export const deliverOrder = (order) => async (dispatch, getState) => {
+    try {
+        dispatch({
+            type: ORDER_DELIVER_REQUEST
+        })
+
+        const {
+            userLogin: { userInfo },
+        } = getState()
+
+        const config = {
+            headers: {
+                'Content-type': 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const { data } = await axios.put(
+            `/api/orders/deliver/?id=${order._id}`,
+            {},
+            config
+        )
+
+        dispatch({
+            type: ORDER_DELIVER_SUCCESS,
+            payload: data
+        })
+
+    } catch (e) {
+        dispatch({
+            type: ORDER_DELIVER_FAIL,
             payload: e.response && e.response.data.detail
                 ? e.response.data.detail
                 : e.message,

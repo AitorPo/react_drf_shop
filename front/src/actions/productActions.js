@@ -15,6 +15,9 @@ import {
     PRODUCT_EDIT_REQUEST,
     PRODUCT_EDIT_SUCCESS,
     PRODUCT_EDIT_FAIL,
+    PRODUCT_REVIEW_SUCCESS,
+    PRODUCT_REVIEW_FAIL,
+    PRODUCT_REVIEW_REQUEST,
 } from '../constants/productConstants'
 
 // dispatch es una función que gestiona el tipo de 'action' (petición) 
@@ -166,6 +169,44 @@ export const editProduct = (product) => async (dispatch, getState) => {
     } catch (e) {
         dispatch({
             type: PRODUCT_EDIT_FAIL,
+            payload: e.response && e.response.data.detail
+                ? e.response.data.detail
+                : e.message,
+        })
+    }
+}
+
+export const reviewProduct = (productId, review) => async (dispatch, getState) => {
+    try {
+        dispatch({
+            type: PRODUCT_REVIEW_REQUEST
+        })
+
+        const {
+            userLogin: { userInfo },
+        } = getState()
+
+        const config = {
+            headers: {
+                'Content-type': 'application/json',
+                Authorization: `Bearer ${userInfo.token}`
+            }
+        }
+
+        const { data } = await axios.post(
+            `/api/products/${productId}/review/`,
+            review,
+            config
+        )
+        
+        dispatch({
+            type: PRODUCT_REVIEW_SUCCESS,
+            payload: data,
+        })
+
+    } catch (e) {
+        dispatch({
+            type: PRODUCT_REVIEW_FAIL,
             payload: e.response && e.response.data.detail
                 ? e.response.data.detail
                 : e.message,

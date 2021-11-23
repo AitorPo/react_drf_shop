@@ -17,6 +17,10 @@ import {
     PRODUCT_EDIT_FAIL,
     PRODUCT_EDIT_REQUEST,
     PRODUCT_EDIT_RESET,
+    PRODUCT_REVIEW_SUCCESS,
+    PRODUCT_REVIEW_FAIL,
+    PRODUCT_REVIEW_REQUEST,
+    PRODUCT_REVIEW_RESET,
 } from '../constants/productConstants'
 
 export const productListReducer = (state = { products: [] }, action) => {
@@ -103,6 +107,25 @@ export const productEditReducer = (state = { product: {} }, action) => {
         // Si por algún motivo el reducer falla y no entra en ninguno de los tres CASE devolvemos el estado inicial del objeto
         case PRODUCT_EDIT_RESET:
             return { product: {} }
+        default:
+            return state
+    }
+}
+
+export const productReviewReducer = (state = { }, action) => {
+    switch (action.type) {
+        case PRODUCT_REVIEW_REQUEST:
+            // devolvemos un array con toda la información del estado (state) del producto con Spread (...) mientras se carga toda la información (loading=true)
+            return { loading: true }
+        case PRODUCT_REVIEW_SUCCESS:
+            // devolvemos una carga de datos (action.payload) ya que se ha finalizada la carga de los mismos (loading=false)
+            return { loading: false, success: true }
+        case PRODUCT_REVIEW_FAIL:
+            // devolvemos una error (e) en la carga de datos (action.payload), si falla, una vez finalizada la carga (loading=false)
+            return { loading: false, e: action.payload }
+        // Si por algún motivo el reducer falla y no entra en ninguno de los tres CASE devolvemos el estado inicial del objeto
+        case PRODUCT_REVIEW_RESET:
+            return {}
         default:
             return state
     }
