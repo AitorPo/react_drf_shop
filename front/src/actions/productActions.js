@@ -18,14 +18,17 @@ import {
     PRODUCT_REVIEW_SUCCESS,
     PRODUCT_REVIEW_FAIL,
     PRODUCT_REVIEW_REQUEST,
+    PRODUCT_TOP_REQUEST,
+    PRODUCT_TOP_SUCCESS,
+    PRODUCT_TOP_FAIL,
 } from '../constants/productConstants'
 
 // dispatch es una función que gestiona el tipo de 'action' (petición) 
 // para generar una respuesta u otra en función de la respuesta obtenida
-export const listProducts = () => async (dispatch) => {
+export const listProducts = (keyword = '') => async (dispatch) => {
     try {
         dispatch({ type: PRODUCT_LIST_REQUEST })
-        const { data } = await axios.get('/api/products/')
+        const { data } = await axios.get(`/api/products${keyword}`)
         dispatch({
             type: PRODUCT_LIST_SUCCESS,
             payload: data
@@ -207,6 +210,26 @@ export const reviewProduct = (productId, review) => async (dispatch, getState) =
     } catch (e) {
         dispatch({
             type: PRODUCT_REVIEW_FAIL,
+            payload: e.response && e.response.data.detail
+                ? e.response.data.detail
+                : e.message,
+        })
+    }
+}
+
+export const listTop = () => async (dispatch) => {
+    try {
+        dispatch({ type: PRODUCT_TOP_REQUEST })
+        const { data } = await axios.get(`/api/products/top-products`)
+        dispatch({
+            type: PRODUCT_TOP_SUCCESS,
+            payload: data
+        })
+    } catch (e) {
+        dispatch({
+            type: PRODUCT_TOP_FAIL,
+            // devolvemos un mensaje genérico (e.message) siempre y cuando
+            // NO exista un mensaje de error devuelto por la API (e.response.data.message)
             payload: e.response && e.response.data.detail
                 ? e.response.data.detail
                 : e.message,

@@ -11,7 +11,9 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
+import searchBox from './SearchBox'
 import { logout as makeLogout } from '../actions/userActions'
+import SearchBox from './SearchBox'
 
 function Header() {
     const userLogin = useSelector(state => state.userLogin)
@@ -31,9 +33,10 @@ function Header() {
                         */}
                         <Navbar.Brand>APG's Shop</Navbar.Brand>
                     </LinkContainer>
+                    <SearchBox/>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="mr-auto">
+                        <Nav className="ml-auto">
                             <LinkContainer to='/cart'>
                                 <Nav.Link><i className="fas fa-shopping-cart"></i> Carrito</Nav.Link>
                             </LinkContainer>
@@ -70,5 +73,6 @@ function Header() {
         </header>
     )
 }
+
 
 export default Header

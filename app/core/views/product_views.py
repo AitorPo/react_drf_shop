@@ -1,6 +1,7 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from rest_framework.response import Response
 
 from ..models import Product, Review
@@ -14,6 +15,20 @@ class ProductViewSet(viewsets.ModelViewSet):
     
     def get_serializer_class(self):
         return ProductSerializer
+    
+    def get_queryset(self):
+        queryset = Product.objects.all().order_by('?')
+        self.paginate_queryset(queryset)
+        keyword = self.request.query_params.get('keyword')
+        if keyword:
+            queryset = queryset.filter(name__icontains=keyword)            
+        return queryset
+    
+    @action(detail=False, url_path='top-products')
+    def get_tope_products(self, request):
+        products = Product.objects.filter(rating__gte=4).order_by('-rating')[:5]
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     @action(detail=False, permission_classes=(permissions.IsAdminUser,), url_path='product')
     def get_product(self, request):
@@ -70,7 +85,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         product = get_object_or_404(Product, _id=product_id)
 
         product.image = request.FILES.get('image')
-        product.save()
+        product.save() 
 
         return Response('Imagen subida')
     

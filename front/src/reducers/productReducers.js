@@ -21,6 +21,9 @@ import {
     PRODUCT_REVIEW_FAIL,
     PRODUCT_REVIEW_REQUEST,
     PRODUCT_REVIEW_RESET,
+    PRODUCT_TOP_REQUEST,
+    PRODUCT_TOP_SUCCESS,
+    PRODUCT_TOP_FAIL,
 } from '../constants/productConstants'
 
 export const productListReducer = (state = { products: [] }, action) => {
@@ -30,7 +33,7 @@ export const productListReducer = (state = { products: [] }, action) => {
             return { loading: true, products: [] }
         case PRODUCT_LIST_SUCCESS:
             // devolvemos una carga de datos (action.payload) ya que se ha finalizada la carga de los mismos (loading=false)
-            return { loading: false, products: action.payload }
+            return { loading: false, products:action.payload.results, page:action.payload.page, pages:action.payload.pages }
         case PRODUCT_LIST_FAIL:
             // devolvemos una error (e) en la carga de datos (action.payload), si falla, una vez finalizada la carga (loading=false)
             return { loading: false, e: action.payload }
@@ -126,6 +129,23 @@ export const productReviewReducer = (state = { }, action) => {
         // Si por algún motivo el reducer falla y no entra en ninguno de los tres CASE devolvemos el estado inicial del objeto
         case PRODUCT_REVIEW_RESET:
             return {}
+        default:
+            return state
+    }
+}
+
+export const productTopReducer = (state = { products:[] }, action) => {
+    switch (action.type) {
+        case PRODUCT_TOP_REQUEST:
+            // devolvemos un array con toda la información del estado (state) del producto con Spread (...) mientras se carga toda la información (loading=true)
+            return { loading: true, products: [] }
+        case PRODUCT_TOP_SUCCESS:
+            // devolvemos una carga de datos (action.payload) ya que se ha finalizada la carga de los mismos (loading=false)
+            return { loading: false, products: action.payload }
+        case PRODUCT_TOP_FAIL:
+            // devolvemos una error (e) en la carga de datos (action.payload), si falla, una vez finalizada la carga (loading=false)
+            return { loading: false, e: action.payload }
+        // Si por algún motivo el reducer falla y no entra en ninguno de los tres CASE devolvemos el estado inicial del objeto
         default:
             return state
     }
