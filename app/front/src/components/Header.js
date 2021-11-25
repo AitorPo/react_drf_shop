@@ -33,9 +33,9 @@ function Header() {
                         */}
                         <Navbar.Brand>APG's Shop</Navbar.Brand>
                     </LinkContainer>
-                    <SearchBox/>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
+                    <SearchBox/>
                         <Nav className="ml-auto">
                             <LinkContainer to='/cart'>
                                 <Nav.Link><i className="fas fa-shopping-cart"></i> Carrito</Nav.Link>
